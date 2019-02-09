@@ -1,0 +1,47 @@
+{% extends 'fake_news/base.html' %}
+
+{% block content%}
+{% if user.is_authenticated and user.username == "admin" %}
+<h1 class="text-center pt-3 pb-3">Welcome {{ user.username }}</h1>
+{% elif user.is_authenticated and user.username != "admin" %}
+<h1 class="text-center pt-3 pb-3">Welcome {{ user.username }}</h1>
+<div class="container bg-white">
+    <div class="jumbotron bg-white shadow">
+        <h1 class="display-4 text-center pb-5">Fake News Detector</h1>
+        <form method="POST" action="{% url 'predict' %}">
+            {% csrf_token %}
+            <div class="form-group pb-5">
+                <textarea class="form-control" rows="10" name="news"
+                          placeholder="Enter Your News To Predict Its Correctness" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block pt-3 pb-3">Predict</button>
+        </form>
+    </div>
+</div>
+{% else %}
+<h1 class="text-center pt-3 pb-3">HOME</h1>
+<h1 class="text-center pt-3 pb-3">ABOUT</h1>
+{% with "**********" as range %}
+{% for i in range %}
+<hr>
+{% endfor %}
+{% endwith %}
+<div class="col-md-6 offset-md-3">
+    <form action=>
+        <div class="pt-5">
+            <a class="btn btn-primary btn-block" href="{% url 'login' %}">Existing User</a>
+        </div>
+    </form>
+    <form action=#>
+        <div class="pt-5">
+            <a class="btn btn-primary btn-block" href="{% url 'register' %}">New User</a>
+        </div>
+    </form>
+</div>
+{% with "****" as range %}
+{% for i in range %}
+<br>
+{% endfor %}
+{% endwith %}
+{% endif %}
+{% endblock %}
