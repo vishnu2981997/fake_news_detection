@@ -2,10 +2,107 @@
 
 {% block content%}
 {% if user.is_authenticated%}
-<h1 class="text-center pt-3 pb-3">HISTORY</h1>
-<br>
-<br>
-<br>
-<h1 class="text-center">Under Maintenance</h1>
+<div class="row">
+    <div class="col-4">
+        <div id="list-example" class="list-group ">
+            <h4 class="list-group-item list-group-item-dark text-center pt-3 pb-3"
+                href=#>History</h4>
+            {% for i in data %}
+            <a class="list-group-item list-group-item-action list-group-item-light text-center pt-3 pb-3"
+               href="#list-item-{{ i.id }} ">News {{ i.id }}</a>
+            {% endfor %}
+            <p>&nbsp;</p>
+        </div>
+    </div>
+    <div class="col-8">
+        <div data-spy="scroll" data-target="#list-example" data-offset="0" class="scrollspy-example">
+            <div class="row pt-3 pb-3">
+                <div class="col-1 text-center">
+                    <h4>Id</h4>
+                </div>
+                <div class="col-8 text-center">
+                    <h4>News</h4>
+                </div>
+                <div class="col-3 text-center">
+                    <h4>Date</h4>
+                </div>
+            </div>
+            {% for i in data %}
+            <p>
+                <button class="btn btn-light btn-block text-left" type="button" data-toggle="collapse"
+                        data-target="#collapseExample-{{ i.id }}"
+                        aria-expanded="false" aria-controls="collapseExample" id="list-item-{{ i.id }}">
+                    <div class="row">
+                        <div class="col-1">
+                            <h5>{{ i.id }}</h5>
+                        </div>
+                        <div class="col-7">
+                            <h5>{{ i.news }}</h5>
+                        </div>
+                        <div class="col-4 text-right">
+                            <small class="text-muted">{{ i.predicted_date }}</small>
+                        </div>
+                    </div>
+                </button>
+            </p>
+            <div class="collapse pb-3" id="collapseExample-{{ i.id }}">
+                <div class="card card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Naive Bayes</h5>
+                                    <p class="card-text">{{ i.mnb2pred }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Naive Bayes</h5>
+                                    <p class="card-text">{{ i.mnb2pred }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Naive Bayes</h5>
+                                    <p class="card-text">{{ i.mnb2pred }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Naive Bayes</h5>
+                                    <p class="card-text">{{ i.mnb2pred }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Naive Bayes</h5>
+                                    <p class="card-text">{{ i.mnb2pred }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Naive Bayes</h5>
+                                    <p class="card-text">{{ i.mnb2pred }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
 {% endif %}
 {% endblock %}

@@ -3,7 +3,6 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from django.contrib import messages
 from .forms import SignUpForm, EditProfileForm, ChangePasswordForm
-import string
 from .models import Prediction, Image
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
@@ -31,6 +30,7 @@ def login_user(request):
         return render(request, 'fake_news/login.html', {})
 
 
+@login_required(login_url='login')
 def logout_user(request):
     logout(request)
     messages.success(request, 'You Have Been Logged Out...')
@@ -46,7 +46,7 @@ def register_user(request):
             password = form.cleaned_data['password1']
             user = authenticate(request, username=username, password=password)
             login(request, user)
-            messages.success(request, ('You Have Registered'))
+            messages.success(request, 'You Have Registered')
             return redirect('home')
     else:
         form = SignUpForm()
@@ -54,12 +54,13 @@ def register_user(request):
     return render(request, 'fake_news/register.html', context)
 
 
+@login_required(login_url='login')
 def edit_profile(request):
     if request.method == "POST":
         form = EditProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, ('You Have Edited Your Profile,,,'))
+            messages.success(request, 'You Have Edited Your Profile,,,')
             return redirect('home')
     else:
         form = EditProfileForm(instance=request.user)
@@ -68,13 +69,14 @@ def edit_profile(request):
     return render(request, 'fake_news/edit_profile.html', context)
 
 
+@login_required(login_url='login')
 def change_password(request):
     if request.method == "POST":
         form = ChangePasswordForm(data=request.POST, user=request.user)
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)
-            messages.success(request, ('You Have Edited Your Password...'))
+            messages.success(request, 'You Have Edited Your Password...')
             return redirect('home')
     else:
         form = ChangePasswordForm(user=request.user)
@@ -83,45 +85,47 @@ def change_password(request):
     return render(request, 'fake_news/change_password.html', context)
 
 
+@login_required(login_url='login')
 def user_history(request):
-    return render(request, 'fake_news/history.html', {})
+    history_data = Prediction.objects.filter(user_id=request.user.id)
+    return render(request, "fake_news/history.html", {"data": history_data})
 
 
 @login_required(login_url='login')
 def predict(request):
     if request.method == 'POST':
-        # try:
-        news = request.POST['news']
-        data = np.array(news)
-        time = timezone.now()
-        mnb2pred, rfpred, decisionpred, svmpred, knnpred, hybrid = prediction.predict(data)
-        q = Prediction(
-            news=news,
-            mnb2pred=mnb2pred,
-            rfpred=rfpred,
-            decisionpred=decisionpred,
-            svmpred=svmpred,
-            knnpred=knnpred,
-            hybrid=hybrid,
-            predicted_date=time,
-            user_id=request.user.id
-        )
-        q.save()
-        images = Image.objects.all()
-        images = [i.image.url for i in images]
-        return render(request, 'fake_news/prediction.html', {"data": {"Naive Bayes": [mnb2pred, images[0]],
-                                                                      "Random Forest": [rfpred, images[1]],
-                                                                      "Decision Tree": [decisionpred, images[2]],
-                                                                      "SVM": [svmpred, images[3]],
-                                                                      "K Nearest Neighbours": [knnpred, images[4]],
-                                                                      "Hybrid": [hybrid, images[5]]},
-                                                             "news": news,
-                                                             "time": time
-                                                             }
-                      )
-        # except:
-        #     messages.success(request, 'Error : Invalid Expression')
-        #     return redirect('home')
+        try:
+            news = request.POST['news']
+            data = np.array(news)
+            time = timezone.now()
+            mnb2pred, rfpred, decisionpred, svmpred, knnpred, hybrid = prediction.predict(data)
+            q = Prediction(
+                news=news,
+                mnb2pred=mnb2pred,
+                rfpred=rfpred,
+                decisionpred=decisionpred,
+                svmpred=svmpred,
+                knnpred=knnpred,
+                hybrid=hybrid,
+                predicted_date=time,
+                user_id=request.user.id
+            )
+            q.save()
+            images = Image.objects.all()
+            images = [i.image.url for i in images]
+            return render(request, 'fake_news/prediction.html', {"data": {"Naive Bayes": [mnb2pred, images[0]],
+                                                                          "Random Forest": [rfpred, images[1]],
+                                                                          "Decision Tree": [decisionpred, images[2]],
+                                                                          "SVM": [svmpred, images[3]],
+                                                                          "K Nearest Neighbours": [knnpred, images[4]],
+                                                                          "Hybrid": [hybrid, images[5]]},
+                                                                 "news": news,
+                                                                 "time": time
+                                                                 }
+                          )
+        except:
+            messages.success(request, 'Error : Invalid Expression')
+            return redirect('home')
     else:
         return render(request, 'fake_news/home.html', {})
 

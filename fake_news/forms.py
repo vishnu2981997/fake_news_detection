@@ -17,7 +17,6 @@ class ChangePasswordForm(PasswordChangeForm):
 
 
 class EditProfileForm(UserChangeForm):
-
     password = forms.CharField(label="", widget=forms.TextInput(attrs={'type': 'hidden'}))
     email = forms.EmailField(label="", widget=forms.TextInput(
         attrs={'class': 'form-control shadow-sm bg-white rounded', 'placeholder': 'Email Address'}))
